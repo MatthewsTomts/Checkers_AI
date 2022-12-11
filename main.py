@@ -30,10 +30,10 @@ def main():
             run = False
 
         if game.turn == PLAY1_COLOR:
-            new_board = minimax(game.get_board(), 3, PLAY1_COLOR, game)[1]
+            new_board = minimax(game.get_board(), 2, PLAY1_COLOR, game)[1]
             game.ai_move(new_board)
         if game.turn == PLAY2_COLOR:
-            new_board = minimax(game.get_board(), 3, PLAY2_COLOR, game)[1]
+            new_board = minimax(game.get_board(), 2, PLAY2_COLOR, game)[1]
             game.ai_move(new_board)
 
 

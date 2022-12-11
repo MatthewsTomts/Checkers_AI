@@ -7,28 +7,24 @@ PLAY2_COLOR = (210, 0, 0)
 
 def minimax(position, depth, player, game):
     if depth == 0 or game.winner() != None:
-        return evaluate(position), position
+        return evaluate(position, game, player), position
 
     if player == PLAY2_COLOR:
-        maxEval = float('-inf')
-        best_move = position
-        for move in get_all_moves(position, player, game):
-            evaluation = minimax(move, depth-1, player, game)[0]
-            maxEval = max(maxEval, evaluation)
-            if maxEval == evaluation:
-                best_move = move
-
-        return maxEval, best_move
+        bestEval = float('-inf')
     else:
-        minEval = float('+inf')
-        best_move = position
-        for move in get_all_moves(position, player, game):
-            evaluation = minimax(move, depth-1, player, game)[0]
-            minEval = min(minEval, evaluation)
-            if minEval == evaluation:
-                best_move = move
+        bestEval = float('+inf')
 
-        return minEval, best_move
+    best_move = position
+    for move in get_all_moves(position, player, game):
+        evaluation = minimax(move, depth-1, player, game)[0]
+        if player == PLAY2_COLOR:
+            bestEval = max(bestEval, evaluation)
+        else:
+            bestEval = min(bestEval, evaluation)
+        if bestEval == evaluation:
+            best_move = move
+
+    return bestEval, best_move
 
 def get_all_moves(board, color, game):
     moves = []
@@ -59,5 +55,9 @@ def draw_moves(game, board, piece):
     pygame.display.update()
     pygame.time.delay(200)
 
-def evaluate(position):
-    return position.play1_left - position.play2_left + (position.play1_kings * 0.5 + position.play2_kings * 0.5)
+def evaluate(position, game, player):
+    moves = len(game.valid_moves)
+    if player == PLAY1_COLOR:
+        moves *= -1
+    print(position.play1_left - position.play2_left + (position.play1_kings * 0.5 + position.play2_kings * 0.5) + moves)
+    return position.play1_left - position.play2_left + (position.play1_kings * 0.5 + position.play2_kings * 0.5) + moves
