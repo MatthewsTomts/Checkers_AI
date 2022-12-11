@@ -6,8 +6,11 @@ PLAY1_COLOR = (0, 0, 210)
 PLAY2_COLOR = (210, 0, 0)
 
 def minimax(position, depth, player, game):
+    quant_moves = 0
+    for piece in position.get_all_pieces(player):
+        quant_moves += len(game.get_valid_moves(piece))
     if depth == 0 or game.winner() != None:
-        return evaluate(position, game, player), position
+        return evaluate(position, quant_moves, player), position
 
     if player == PLAY2_COLOR:
         bestEval = float('-inf')
@@ -15,7 +18,8 @@ def minimax(position, depth, player, game):
         bestEval = float('+inf')
 
     best_move = position
-    for move in get_all_moves(position, player, game):
+    moves = get_all_moves(position, player, game)
+    for move in moves:
         evaluation = minimax(move, depth-1, player, game)[0]
         if player == PLAY2_COLOR:
             bestEval = max(bestEval, evaluation)
@@ -55,8 +59,7 @@ def draw_moves(game, board, piece):
     pygame.display.update()
     pygame.time.delay(200)
 
-def evaluate(position, game, player):
-    moves = len(game.valid_moves)
+def evaluate(position, moves, player):
     if player == PLAY1_COLOR:
         moves *= -1
     print(position.play1_left - position.play2_left + (position.play1_kings * 0.5 + position.play2_kings * 0.5) + moves)
