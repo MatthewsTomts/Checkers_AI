@@ -15,9 +15,9 @@ class Game:
 
     def winner(self):
         if self.board.play1_left <= 0:
-            return 'Player1'
-        elif self.board.play2_left <= 0:
             return 'Player2'
+        elif self.board.play2_left <= 0:
+            return 'Player1'
         return None
 
     def _init(self):
@@ -57,39 +57,39 @@ class Game:
    
     def get_valid_moves(self, piece):
         moves = {}
-        left = piece.col - 1
-        right = piece.col + 1
+        col = piece.col
         row = piece.row
 
         if piece.color == PLAY1_COLOR or piece.king:
-            moves.update(self._traverse(row + 1, ROWS, 1, piece.color, left, piece.king))
-            moves.update(self._traverse(row + 1, ROWS, 1, piece.color, right, piece.king))
+            moves.update(self._traverse(row + 1, ROWS, 1, piece.color, col, -1, piece.king))
+            moves.update(self._traverse(row + 1, ROWS, 1, piece.color, col, 1, piece.king))
 
         if piece.color == PLAY2_COLOR or piece.king:
-            moves.update(self._traverse(row - 1, -1, -1, piece.color, left, piece.king))
-            moves.update(self._traverse(row - 1, -1, -1, piece.color, right, piece.king))
+            moves.update(self._traverse(row - 1, -1, -1, piece.color, col, -1, piece.king))
+            moves.update(self._traverse(row - 1, -1, -1, piece.color, col, 1, piece.king))
         
         return moves
 
-    def _traverse(self, start, stop, step, color, direc, king, skipped=[]):
+    def _traverse(self, start, stop, step, color, col, direc, king, skipped=[]):
         moves = {}
         last = []
         for row in range(start, stop, step):
-            if direc < 0 or direc >= COLS:
+            col += direc
+            if col < 0 or col >= COLS:
                 break
 
-            current = self.board.get_piece(row, direc)
+            current = self.board.get_piece(row, col)
             if current == 0:
                 if skipped and not last:
                     break
                 elif skipped:
-                    moves[(row, direc)] = last + skipped
+                    moves[(row, col)] = last + skipped
                 else:
-                    moves[(row, direc)] = last
+                    moves[(row, col)] = last
 
                 if last:
-                    moves.update(self._traverse(row+step, stop, step, color, direc-1, king, skipped=last))
-                    moves.update(self._traverse(row+step, stop, step, color, direc+1, king, skipped=last))
+                    moves.update(self._traverse(row+step, stop, step, color, col, -1, king, skipped=last))
+                    moves.update(self._traverse(row+step, stop, step, color, col, 1, king, skipped=last))
                 if not king:
                     break
 
@@ -100,10 +100,6 @@ class Game:
                     break
                 last = [current]
 
-            if direc < 0:
-                direc -= 1 
-            else:
-                direc += 1
         return moves
 
     def change_turn(self):

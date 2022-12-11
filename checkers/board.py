@@ -19,12 +19,12 @@ class Board:
 
     def draw(self, wind, moves):
         self.draw_squares(wind)
-        self.draw_valid_moves(wind, moves)
         for row in range(ROWS):
             for col in range(COLS):
                 piece = self.board[row][col]
                 if piece != 0:
                     piece.draw(wind)
+        self.draw_valid_moves(wind, moves)
 
     # Draw dots on the possibles moves
     def draw_valid_moves(self, wind, moves):
